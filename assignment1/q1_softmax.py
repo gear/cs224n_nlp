@@ -1,44 +1,10 @@
 import numpy as np
 
-
 def softmax(x):
-    """Compute the softmax function for each row of the input x.
-
-    It is crucial that this function is optimized for speed because
-    it will be used frequently in later code. You might find numpy
-    functions np.exp, np.sum, np.reshape, np.max, and numpy
-    broadcasting useful for this task.
-
-    Numpy broadcasting documentation:
-    http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
-
-    You should also make sure that your code works for a single
-    N-dimensional vector (treat the vector as a single row) and
-    for M x N matrices. This may be useful for testing later. Also,
-    make sure that the dimensions of the output match the input.
-
-    You must implement the optimization in problem 1(a) of the
-    written assignment!
-
-    Arguments:
-    x -- A N dimensional vector or M x N dimensional numpy matrix.
-
-    Return:
-    x -- You are allowed to modify x in-place
-    """
     orig_shape = x.shape
-
-    if len(x.shape) > 1:
-        # Matrix
-        ### YOUR CODE HERE
-        raise NotImplementedError
-        ### END YOUR CODE
-    else:
-        # Vector
-        ### YOUR CODE HERE
-        raise NotImplementedError
-        ### END YOUR CODE
-
+    max_val = np.max(x, axis=-1, keepdims=True)
+    x -= max_val
+    x = np.exp(x) / np.sum(np.exp(x), axis=-1, keepdims=True)
     assert x.shape == orig_shape
     return x
 
@@ -77,9 +43,14 @@ def test_softmax():
     your tests be graded.
     """
     print "Running your tests..."
-    ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+    test3 = softmax(np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,4000,12],[1,2,1,1]]))
+    ans3 = np.array([[ 0.0320586 ,  0.08714432,  0.23688282,  0.64391426],
+                     [ 0.0320586 ,  0.08714432,  0.23688282,  0.64391426],
+                     [ 0.0320586 ,  0.08714432,  0.23688282,  0.64391426],
+                     [ 0.        ,  0.        ,  1.        ,  0.        ],
+                     [ 0.1748777 ,  0.47536689,  0.1748777 ,  0.1748777 ]])
+    assert np.allclose(test3, ans3)
+    print "Done custom test"
 
 
 if __name__ == "__main__":

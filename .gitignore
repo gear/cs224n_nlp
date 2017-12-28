@@ -102,3 +102,6 @@ ENV/
 
 # datasets
 datasets/
+
+# vim
+.swp
