@@ -11,8 +11,9 @@ def _sigmoid(x):
 
 sigmoid = np.vectorize(_sigmoid)
 
-def sigmoid_grad(f):
-    return f * (1 - f)
+def sigmoid_grad(s):
+    ds = s * (1 - s)
+    return ds
 
 def test_sigmoid_basic():
     print "Running basic tests..."
