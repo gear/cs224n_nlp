@@ -2,52 +2,15 @@ import numpy as np
 
 
 def softmax(x):
-    """Compute the softmax function for each row of the input x.
-
-    It is crucial that this function is optimized for speed because
-    it will be used frequently in later code. You might find numpy
-    functions np.exp, np.sum, np.reshape, np.max, and numpy
-    broadcasting useful for this task.
-
-    Numpy broadcasting documentation:
-    http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
-
-    You should also make sure that your code works for a single
-    N-dimensional vector (treat the vector as a single row) and
-    for M x N matrices. This may be useful for testing later. Also,
-    make sure that the dimensions of the output match the input.
-
-    You must implement the optimization in problem 1(a) of the
-    written assignment!
-
-    Arguments:
-    x -- A N dimensional vector or M x N dimensional numpy matrix.
-
-    Return:
-    x -- You are allowed to modify x in-place
-    """
     orig_shape = x.shape
-
-    if len(x.shape) > 1:
-        # Matrix
-        ### YOUR CODE HERE
-        raise NotImplementedError
-        ### END YOUR CODE
-    else:
-        # Vector
-        ### YOUR CODE HERE
-        raise NotImplementedError
-        ### END YOUR CODE
-
+    max_val = np.max(x, axis=-1, keepdims=True)
+    x -= max_val
+    x = np.exp(x) / np.sum(np.exp(x), axis=-1, keepdims=True)
     assert x.shape == orig_shape
     return x
 
 
 def test_softmax_basic():
-    """
-    Some simple tests to get you started.
-    Warning: these are not exhaustive.
-    """
     print "Running basic tests..."
     test1 = softmax(np.array([1,2]))
     print test1
@@ -70,16 +33,12 @@ def test_softmax_basic():
 
 
 def test_softmax():
-    """
-    Use this space to test your softmax implementation by running:
-        python q1_softmax.py
-    This function will not be called by the autograder, nor will
-    your tests be graded.
-    """
     print "Running your tests..."
-    ### YOUR CODE HERE
-    raise NotImplementedError
-    ### END YOUR CODE
+    test3 = softmax(np.array([[1,2,3,4,5], [1000, 2000, 3000, 5, 7]]))
+    ans3 = np.array([
+        [0.01165623, 0.03168492, 0.08612854, 0.23412166, 0.63640865],
+        [0., 0., 1., 0., 0.]])
+    assert np.allclose(test3, ans3, rtol=1e-05, atol=1e-06)
 
 
 if __name__ == "__main__":

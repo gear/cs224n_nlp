@@ -7,6 +7,11 @@ from q1_softmax import softmax
 from q2_sigmoid import sigmoid, sigmoid_grad
 from q2_gradcheck import gradcheck_naive
 
+def cross_entropy(labels, y_hat):
+    assert labels.shape == y_hat.shape, "Predictions must match labels shape."
+    log_y_hat = np.log(y_hat)
+    x_ent = np.sum(labels * log_y_hat, axis=-1)
+    return x_ent
 
 def forward_backward_prop(data, labels, params, dimensions):
     """
@@ -35,13 +40,20 @@ def forward_backward_prop(data, labels, params, dimensions):
     ofs += H * Dy
     b2 = np.reshape(params[ofs:ofs + Dy], (1, Dy))
 
-    ### YOUR CODE HERE: forward propagation
-    raise NotImplementedError
-    ### END YOUR CODE
+    z1 = np.matmul(data, W1) + b1
+    h = sigmoid(z1)
+    z2 = np.matmul(h, W2) + b2
+    y_hat = softmax(z2)
+    cost = cross_entropy(labels, y_hat)
 
-    ### YOUR CODE HERE: backward propagation
-    raise NotImplementedError
-    ### END YOUR CODE
+    dJ_dz2 = y_hat - labels  # (1x10)
+    gradW2 = np.matmul(h.T, dJ_dz2)  # (5x10)
+    dz2_dh = W2.T  # (10x5)
+    dh_dz1 = np.diag(h * (1-h))  # (5x5)
+    dJ_dz1 = np.matmul(np.matmul(dJ_dz2, dz2_dh), dh_dz1)  # (1x5)
+    gradW1 = np.matmul(data.T, dJ_dz1)  # (10x5)
+    gradb2 = dJ_dz2
+    gradb1 = dJ_dz1
 
     ### Stack gradients (do not modify)
     grad = np.concatenate((gradW1.flatten(), gradb1.flatten(),
